@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RegisterBusinessTest {
+class RegisterBusinessFailureTest {
 
     @Test
     @DisplayName("Firstname ของ speaker มีค่าเป็น null จึงเกิด exception ขึ้นมา")
@@ -49,6 +49,18 @@ class RegisterBusinessTest {
     }
 
     @Test
+    @DisplayName("Email ของ speaker ไม split ไม่ถูกต้อง จึงเกิด exception ขึ้นมา")
+    public void case06() {
+        RegisterBusiness registerBusiness = new RegisterBusiness();
+        Speaker speaker = new Speaker();
+        speaker.setFirstName("chai");
+        speaker.setLastName("Foo");
+        speaker.setEmail("chai.Foo@fail@.com");
+        Exception exception = assertThrows(DomainEmailInvalidException.class, () -> registerBusiness.register(null, speaker));
+        assertNull(exception.getMessage());
+    }
+
+    @Test
     @DisplayName("exp ของ speaker มีค่าเป็น null จึงเกิด exception ขึ้นมา")
     public void case05() {
         RegisterBusiness registerBusiness = new RegisterBusiness();
@@ -58,23 +70,6 @@ class RegisterBusinessTest {
         speaker.setEmail("chai.Foo@gmail.com");
         Exception exception = assertThrows(SaveSpeakerException.class, () -> registerBusiness.register(null, speaker));
         assertEquals("Can't save a speaker.", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("exp ของ speaker มีค่าและ return ออกมา")
-    public void case06() {
-        RegisterBusiness registerBusiness = new RegisterBusiness();
-        Speaker speaker = new Speaker();
-        speaker.setFirstName("chai");
-        speaker.setLastName("Foo");
-        speaker.setEmail("chai.Foo@gmail.com");
-        speaker.setExp(1);
-        assertEquals(1, registerBusiness.register(new SpeakerRepository() {
-            @Override
-            public Integer saveSpeaker(Speaker speaker) {
-                return speaker.getExp();
-            }
-        }, speaker));
     }
 
 }
